@@ -1,2 +1,2 @@
 # tic-tac-toe
-Tic-tac-toe game web app
+Tic-tac-toe game made with JavaScript
