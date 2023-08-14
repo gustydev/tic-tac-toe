@@ -24,3 +24,7 @@ body {
     font-size: 96px;
     font-weight: BOLD;
 }
+
+button#new-game {
+    display: none;
+}

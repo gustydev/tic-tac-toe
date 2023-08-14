@@ -15,26 +15,39 @@ const board = (() => {
     return {update, rows, reset};
 })();
 
-const newPlayer = (name) => {
-    const sayName = () => console.log(`Hello there, ${name}!`)
-    return {sayName, name};
-}
-
-// gameBoard.update([['X', '', 'X'], ['O', '', 'O'], ['X', 'O', 'X']]);
-// Temporary, just to have something on the page
-
 const game = (() => {
-    const play = () => {
-        let currentPlayer = 'X';
-        const currentDisplay = document.querySelector('div.current-player');
-        const updateDisplay = () => {
-            currentDisplay.textContent = `Player ${currentPlayer}'s turn`;
+    let win = '';
+    let currentPlayer = 'X';
+    const resetButton = document.querySelector('button#reset');
+    resetButton.addEventListener('click', () => {
+        reset();
+    })
+    const updateDisplay = () => {
+        const status = document.querySelector('div.game-status');
+        if (!win) {
+            status.textContent = `Player ${currentPlayer}'s turn`;
+        } else {
+            const newGame = document.querySelector('button#new-game');
+            newGame.style = 'display: flex;'
+            resetButton.style = 'display: none;';
+            newGame.addEventListener('click', () => {
+                reset();
+                newGame.style = 'display: none;';
+                resetButton.style = 'display: flex;'
+            })
+            if (!(win === 'tie')) {
+                status.textContent = `Player ${win} wins!`
+            } else if (win === 'tie') {
+                status.textContent = `It's a tie!`
+            }
         };
+    };
+    const play = () => {
         updateDisplay();
         const squares = document.querySelectorAll('div.square');
         squares.forEach(square => {
             square.addEventListener('click', () => {
-                if (!square.textContent) {
+                if (!square.textContent && !win) {
                     if (currentPlayer === 'X') {
                         board.rows[square.parentElement.id][square.classList[1]] = 'X';
                         currentPlayer = 'O'
@@ -47,6 +60,9 @@ const game = (() => {
                 }
                 board.update();
                 checkWin();
+                if (win) {
+                    updateDisplay();
+                }
             })
         })
     }
@@ -54,10 +70,9 @@ const game = (() => {
         board.rows.forEach(row => {
             if (!row.includes(undefined) && row.length === 3) {
                 if (row.every((element) => element === 'X')) {
-                    alert('Player X wins!');
-                    // board.reset();
+                    return win = 'X';
                 } else if (row.every((element) => element === 'O')) {
-                    alert('Player O wins!');
+                    return win = 'O';
                 }
             }
         })
@@ -67,29 +82,33 @@ const game = (() => {
                 column.push(board.rows[z][i]);
             }
             if (column.join('') === 'XXX') {
-                alert('Player X wins!')
+                return win = 'X';
             } else if (column.join('') === 'OOO') {
-                alert('Player O wins!')
+                return win = 'O';
             }
             column.splice(0);
         }
         const diagonals = [[board.rows[0][0], board.rows[1][1], board.rows[2][2]], [board.rows[0][2], board.rows[1][1], board.rows[2][0]]];
         diagonals.forEach(diagonal => {
             if (diagonal.join('') === 'XXX') {
-                alert('Player X wins!')
+                return win = 'X';
             } else if (diagonal.join('') === 'OOO') {
-                alert('Player O wins!')
+                return win = 'O';
             }
         });
+        if (board.rows.every(row => row.length === 3 && !row.includes(undefined))) {
+            return win = 'tie';
+        }
     }
-    return {play, checkWin};
+    const reset = () => {
+        board.reset();
+        win = '';
+        currentPlayer = 'X';
+        updateDisplay();
+    }
+    return {play, reset};
 })();
 
 game.play();
-
-// 0[0] 1[1] 2[2]
-// 0[2] 1[1] 2[0]
-
-// board.rows[0][0], board.rows[1][1], board.rows[2][2] === 'X'
 
 
