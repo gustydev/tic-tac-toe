@@ -18,8 +18,8 @@ const board = (() => {
 const game = (() => {
     let win = '';
     let currentPlayer = 'X';
-    const resetButton = document.querySelector('button#reset');
-    resetButton.addEventListener('click', () => {
+    const restart = document.querySelector('button#restart');
+    restart.addEventListener('click', () => {
         reset();
     })
     const updateDisplay = () => {
@@ -27,14 +27,6 @@ const game = (() => {
         if (!win) {
             status.textContent = `Player ${currentPlayer}'s turn`;
         } else {
-            const newGame = document.querySelector('button#new-game');
-            newGame.style = 'display: flex;'
-            resetButton.style = 'display: none;';
-            newGame.addEventListener('click', () => {
-                reset();
-                newGame.style = 'display: none;';
-                resetButton.style = 'display: flex;'
-            })
             if (!(win === 'tie')) {
                 status.textContent = `Player ${win} wins!`
             } else if (win === 'tie') {
@@ -96,7 +88,7 @@ const game = (() => {
                 return win = 'O';
             }
         });
-        if (board.rows.every(row => row.length === 3 && !row.includes(undefined))) {
+        if (board.rows.every(row => row.length === 3 && !row.includes(undefined)) && !win) {
             return win = 'tie';
         }
     }
@@ -110,5 +102,3 @@ const game = (() => {
 })();
 
 game.play();
-
-
