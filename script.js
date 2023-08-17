@@ -38,14 +38,20 @@ const game = (() => {
         updateDisplay();
         const squares = document.querySelectorAll('div.square');
         squares.forEach(square => {
+            const currentSquare = (value) => {
+                if (value) {
+                    return board.rows[square.parentElement.id][square.classList[1]] = value;
+                }
+                return board.rows[square.parentElement.id][square.classList[1]];
+            }
             square.addEventListener('click', () => {
-                if (!square.textContent && !win) {
+                if (!currentSquare() && !win) {
                     if (currentPlayer === 'X') {
-                        board.rows[square.parentElement.id][square.classList[1]] = 'X';
+                        currentSquare('X');
                         currentPlayer = 'O'
                         updateDisplay();
                     } else {
-                        board.rows[square.parentElement.id][square.classList[1]] = 'O';
+                        currentSquare('O');
                         currentPlayer = 'X'
                         updateDisplay();
                     }
@@ -54,6 +60,16 @@ const game = (() => {
                 checkWin();
                 if (win) {
                     updateDisplay();
+                }
+            })
+            square.addEventListener('mouseenter', () => {
+                if (!currentSquare() && !win) {
+                    square.innerHTML = `<span style='opacity: 0.5;'>${currentPlayer}</span>`
+                }
+            })
+            square.addEventListener('mouseleave', () => {
+                if (!currentSquare()) {
+                    square.textContent = '';
                 }
             })
         })
